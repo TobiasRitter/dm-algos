@@ -1,6 +1,4 @@
 from math import exp, sqrt, pi
-from re import S
-
 
 Distribution = tuple[float, float, float]
 
@@ -11,14 +9,14 @@ def pretty_print(clusters: dict[Distribution, list[float]], iteration: int):
         print(k, ":", v)
 
 
-def abc(x: float, dist: Distribution):
+def estimate(x: float, dist: Distribution):
     mu, sigma, p = dist
     return p / (sigma * sqrt(2 * pi)) * exp(-((x - mu) ** 2 / (2 * sigma**2)))
 
 
-def estimate(x: float, dist: Distribution, dists: list[Distribution]) -> float:
-    prob = abc(x, dist)
-    norm = sum([abc(x, d) for d in dists])
+def normed_estimate(x: float, dist: Distribution, dists: list[Distribution]) -> float:
+    prob = estimate(x, dist)
+    norm = sum([estimate(x, d) for d in dists])
     return prob / norm
 
 
@@ -33,7 +31,7 @@ def maximize(points: list[float], estimates: list[float]) -> Distribution:
 
 
 def get_prob(point: float, dists: list[Distribution]) -> tuple[float, Distribution]:
-    estimates = {dist: estimate(point, dist, dists) for dist in dists}
+    estimates = {dist: normed_estimate(point, dist, dists) for dist in dists}
     best_dist = max(estimates, key=estimates.get)
     return (point, best_dist)
 
@@ -51,13 +49,14 @@ def get_clusters(
 
 
 def em(points: list[float], dists: list[Distribution], iteration: int):
+    # assign to points to clusters
     clusters = get_clusters(points, dists)
     pretty_print(clusters, iteration)
 
     # update distributions
     new_dists = []
     for dist in dists:
-        estimates = [estimate(point, dist, dists) for point in points]
+        estimates = [normed_estimate(point, dist, dists) for point in points]
         new_dists += [maximize(points, estimates)]
 
     return dists if new_dists == dists else em(points, new_dists, iteration + 1)
