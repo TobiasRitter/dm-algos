@@ -3,64 +3,62 @@ from re import S
 
 
 Distribution = tuple[float, float, float]
-Assignment = tuple[float, float]
 
 
-def pretty_print(
-    clusters: dict[Distribution, list[Assignment]], iteration: int
-) -> None:
+def pretty_print(clusters: dict[Distribution, list[float]], iteration: int):
     print(f"step {iteration}:")
-    for k, assignments in clusters.items():
-        points = list(map(lambda x: x[0], assignments))
-        print(k, ":", points)
+    for k, v in clusters.items():
+        print(k, ":", v)
 
 
-def estimate(x: float, dist: Distribution) -> float:
+def abc(x: float, dist: Distribution):
     mu, sigma, p = dist
     return p / (sigma * sqrt(2 * pi)) * exp(-((x - mu) ** 2 / (2 * sigma**2)))
 
 
-def maximize(dist: Distribution, assignments: list[Assignment]) -> Distribution:
-    probs = list(map(lambda x: x[1], assignments))
-    mu = sum([prob * point for point, prob in assignments]) / sum(probs)
+def estimate(x: float, dist: Distribution, dists: list[Distribution]) -> float:
+    prob = abc(x, dist)
+    norm = sum([abc(x, d) for d in dists])
+    return prob / norm
+
+
+def maximize(points: list[float], estimates: list[float]) -> Distribution:
+    assignments = list(zip(points, estimates))
+    mu = sum([prob * point for point, prob in assignments]) / sum(estimates)
     sigma = sqrt(
-        sum([prob * (point - mu) ** 2 for point, prob in assignments]) / sum(probs)
+        sum([prob * (point - mu) ** 2 for point, prob in assignments]) / sum(estimates)
     )
-    p = 0 if len(probs) == 0 else sum(probs) / len(probs)
+    p = 0 if len(estimates) == 0 else sum(estimates) / len(estimates)
     return (mu, sigma, p)
 
 
-def get_prob(
-    point: float, dists: list[Distribution]
-) -> tuple[float, Distribution, float]:
-    norm = sum([estimate(point, dist) for dist in dists])
-    estimates = {dist: estimate(point, dist) for dist in dists}
+def get_prob(point: float, dists: list[Distribution]) -> tuple[float, Distribution]:
+    estimates = {dist: estimate(point, dist, dists) for dist in dists}
     best_dist = max(estimates, key=estimates.get)
-    best_estimate = max(estimates.values()) / norm
-    return (point, best_dist, best_estimate)
+    return (point, best_dist)
 
 
 def get_clusters(
     points: list[float], dists: list[Distribution]
-) -> dict[Distribution, list[Assignment]]:
-    estimates = [get_prob(point, dists) for point in points]
+) -> dict[Distribution, list[float]]:
+    assignments = [get_prob(point, dists) for point in points]
     clusters = {dist: [] for dist in dists}
 
-    for point, dist, estimate in estimates:
-        clusters[dist] += [(point, estimate)]
+    for point, dist in assignments:
+        clusters[dist] += [point]
 
     return clusters
 
 
 def em(points: list[float], dists: list[Distribution], iteration: int):
     clusters = get_clusters(points, dists)
-    new_dists = []
-
     pretty_print(clusters, iteration)
 
     # update distributions
-    for dist, assignments in clusters.items():
-        new_dists += [maximize(dist, assignments)]
+    new_dists = []
+    for dist in dists:
+        estimates = [estimate(point, dist, dists) for point in points]
+        new_dists += [maximize(points, estimates)]
 
     return dists if new_dists == dists else em(points, new_dists, iteration + 1)
 
