@@ -36,21 +36,8 @@ def kmeans(data_points, means, iteration: int):
 
 
 def main() -> None:
-    data_points = [
-        (2.5, 3),
-        (3, 3),
-        (2, 2.75),
-        (2.5, 2.5),
-        (3, 2.5),
-        (0.5, 1),
-        (1, 1),
-        (3, 1),
-        (3.75, 1),
-        (0.75, 0.75),
-        (1, 0.5),
-        (3.5, 0.5),
-    ]
-    means = [(0.5, 2.5), (5, 2.5), (4.5, 0.5)]
+    data_points = []
+    means = []
     kmeans(data_points, means, 1)
 
 

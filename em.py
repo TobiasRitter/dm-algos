@@ -9,14 +9,14 @@ def pretty_print(clusters: dict[Distribution, list[float]], iteration: int):
         print(k, ":", v)
 
 
-def estimate(x: float, dist: Distribution):
+def normal_dist(x: float, dist: Distribution):
     mu, sigma, p = dist
     return p / (sigma * sqrt(2 * pi)) * exp(-((x - mu) ** 2 / (2 * sigma**2)))
 
 
-def normed_estimate(x: float, dist: Distribution, dists: list[Distribution]) -> float:
-    prob = estimate(x, dist)
-    norm = sum([estimate(x, d) for d in dists])
+def estimate(x: float, dist: Distribution, distributions: list[Distribution]) -> float:
+    prob = normal_dist(x, dist)
+    norm = sum([normal_dist(x, d) for d in distributions])
     return prob / norm
 
 
@@ -30,17 +30,19 @@ def maximize(points: list[float], estimates: list[float]) -> Distribution:
     return (mu, sigma, p)
 
 
-def get_prob(point: float, dists: list[Distribution]) -> tuple[float, Distribution]:
-    estimates = {dist: normed_estimate(point, dist, dists) for dist in dists}
+def get_dist_assignments(
+    point: float, distributions: list[Distribution]
+) -> tuple[float, Distribution]:
+    estimates = {dist: estimate(point, dist, distributions) for dist in distributions}
     best_dist = max(estimates, key=estimates.get)
     return (point, best_dist)
 
 
 def get_clusters(
-    points: list[float], dists: list[Distribution]
+    points: list[float], distributions: list[Distribution]
 ) -> dict[Distribution, list[float]]:
-    assignments = [get_prob(point, dists) for point in points]
-    clusters = {dist: [] for dist in dists}
+    assignments = [get_dist_assignments(point, distributions) for point in points]
+    clusters = {dist: [] for dist in distributions}
 
     for point, dist in assignments:
         clusters[dist] += [point]
@@ -48,24 +50,28 @@ def get_clusters(
     return clusters
 
 
-def em(points: list[float], dists: list[Distribution], iteration: int):
+def em(points: list[float], distributions: list[Distribution], iteration: int):
     # assign to points to clusters
-    clusters = get_clusters(points, dists)
+    clusters = get_clusters(points, distributions)
     pretty_print(clusters, iteration)
 
     # update distributions
-    new_dists = []
-    for dist in dists:
-        estimates = [normed_estimate(point, dist, dists) for point in points]
-        new_dists += [maximize(points, estimates)]
+    new_distributions = []
+    for dist in distributions:
+        estimates = [estimate(point, dist, distributions) for point in points]
+        new_distributions += [maximize(points, estimates)]
 
-    return dists if new_dists == dists else em(points, new_dists, iteration + 1)
+    return (
+        distributions
+        if new_distributions == distributions
+        else em(points, new_distributions, iteration + 1)
+    )
 
 
 def main():
-    data_points = [0.76, 0.86, 1.12, 3.05, 3.51, 3.75]
-    dists = [(1.12, 1, 0.5), (3.05, 1, 0.5)]
-    em(data_points, dists, 1)
+    data_points = []
+    distributions = []
+    em(data_points, distributions, 1)
 
 
 if __name__ == "__main__":
