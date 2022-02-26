@@ -3,12 +3,6 @@ from math import exp, sqrt, pi
 Distribution = tuple[float, float, float]
 
 
-def pretty_print(clusters: dict[Distribution, list[float]], iteration: int):
-    print(f"step {iteration}:")
-    for k, v in clusters.items():
-        print(k, ":", v)
-
-
 def normal_dist(x: float, dist: Distribution):
     mu, sigma, p = dist
     return p / (sigma * sqrt(2 * pi)) * exp(-((x - mu) ** 2 / (2 * sigma**2)))
@@ -28,6 +22,33 @@ def maximize(points: list[float], estimates: list[float]) -> Distribution:
     )
     p = 0 if len(estimates) == 0 else sum(estimates) / len(estimates)
     return (mu, sigma, p)
+
+
+def pretty_print(
+    iteration: int,
+    clusters: dict[Distribution, list[float]],
+    points: list[float],
+    distributions: list[Distribution],
+    decimals: int = 3,
+):
+    print(f"step {iteration}:")
+    print("clusters:")
+    for dist, ps in clusters.items():
+        mu, sigma, p = dist
+        print(
+            f"({round(mu,decimals)},{round(sigma,decimals)},{round(p,decimals)}) : {ps}"
+        )
+
+    print("probabilities:")
+    for dist in distributions:
+        mu, sigma, p = dist
+        probs = [
+            round(estimate(point, dist, distributions), decimals) for point in points
+        ]
+        print(
+            f"({round(mu,decimals)},{round(sigma,decimals)},{round(p,decimals)}) : {probs}"
+        )
+    print("")
 
 
 def get_dist_assignments(
@@ -53,7 +74,7 @@ def get_clusters(
 def em(points: list[float], distributions: list[Distribution], iteration: int):
     # assign to points to clusters
     clusters = get_clusters(points, distributions)
-    pretty_print(clusters, iteration)
+    pretty_print(iteration, clusters, points, distributions)
 
     # update distributions
     new_distributions = []
@@ -70,7 +91,7 @@ def em(points: list[float], distributions: list[Distribution], iteration: int):
 
 def main():
     data_points = []
-    distributions = []
+    distributions = []  # (mu, sigma, p)
     em(data_points, distributions, 1)
 
 
