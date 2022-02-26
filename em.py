@@ -71,9 +71,15 @@ def get_clusters(
     return clusters
 
 
-def em(points: list[float], distributions: list[Distribution], iteration: int):
+def em(
+    points: list[float],
+    distributions: list[Distribution],
+    iteration: int = 1,
+    groups: list[list[float]] = [],
+):
     # assign to points to clusters
     clusters = get_clusters(points, distributions)
+    new_groups = list(clusters.values())
     pretty_print(iteration, clusters, points, distributions)
 
     # update distributions
@@ -84,15 +90,15 @@ def em(points: list[float], distributions: list[Distribution], iteration: int):
 
     return (
         distributions
-        if new_distributions == distributions
-        else em(points, new_distributions, iteration + 1)
+        if new_groups == groups
+        else em(points, new_distributions, iteration + 1, new_groups)
     )
 
 
 def main():
     data_points = []
     distributions = []  # (mu, sigma, p)
-    em(data_points, distributions, 1)
+    em(data_points, distributions)
 
 
 if __name__ == "__main__":
