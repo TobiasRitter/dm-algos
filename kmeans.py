@@ -12,7 +12,7 @@ def pretty_print(
     print(f"step {iteration}:")
     for mean, points in clusters.items():
         x, y = mean
-        print(f"({round(x,DECIMALS)}, {round(y,DECIMALS)}) : {points}", ":", points)
+        print(f"({round(x,DECIMALS)}, {round(y,DECIMALS)}) : {points}")
 
 
 def distance(a: Point, b: Point) -> float:
@@ -48,7 +48,7 @@ def kmeans(
 
 def main() -> None:
     data_points = []  # (x, y)
-    means = []
+    means = []  # (x, y)
     kmeans(data_points, means)
 
 
