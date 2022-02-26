@@ -36,7 +36,7 @@ def pretty_print(
     for dist, ps in clusters.items():
         mu, sigma, p = dist
         print(
-            f"({round(mu,decimals)},{round(sigma,decimals)},{round(p,decimals)}) : {ps}"
+            f"({round(mu,decimals)}, {round(sigma,decimals)}, {round(p,decimals)}) : {ps}"
         )
 
     print("probabilities:")
