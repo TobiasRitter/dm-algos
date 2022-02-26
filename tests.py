@@ -143,8 +143,6 @@ def paired_t_data(
 
 
 def main():
-    print(conf_interval(1780, 230, 12, 0.05, False))
-    print(conf_interval(1900, 250, 20, 0.05, False))
     pass
 
 
