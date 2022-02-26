@@ -1,6 +1,7 @@
 from math import exp, sqrt, pi
 
 Distribution = tuple[float, float, float]
+DECIMALS = 3
 
 
 def normal_dist(x: float, dist: Distribution):
@@ -29,24 +30,23 @@ def pretty_print(
     clusters: dict[Distribution, list[float]],
     points: list[float],
     distributions: list[Distribution],
-    decimals: int = 3,
 ):
     print(f"step {iteration}:")
     print("clusters:")
     for dist, ps in clusters.items():
         mu, sigma, p = dist
         print(
-            f"({round(mu,decimals)}, {round(sigma,decimals)}, {round(p,decimals)}) : {ps}"
+            f"({round(mu,DECIMALS)}, {round(sigma,DECIMALS)}, {round(p,DECIMALS)}) : {ps}"
         )
 
     print("probabilities:")
     for dist in distributions:
         mu, sigma, p = dist
         probs = [
-            round(estimate(point, dist, distributions), decimals) for point in points
+            round(estimate(point, dist, distributions), DECIMALS) for point in points
         ]
         print(
-            f"({round(mu,decimals)},{round(sigma,decimals)},{round(p,decimals)}) : {probs}"
+            f"({round(mu,DECIMALS)},{round(sigma,DECIMALS)},{round(p,DECIMALS)}) : {probs}"
         )
     print("")
 

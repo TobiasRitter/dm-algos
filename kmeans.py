@@ -2,17 +2,17 @@ from statistics import mean as avg
 from math import sqrt
 
 Point = tuple[float, float]
+DECIMALS = 3
 
 
 def pretty_print(
     iteration: int,
     clusters: dict[Point, list[Point]],
-    decimals: int = 3,
 ) -> None:
     print(f"step {iteration}:")
     for mean, points in clusters.items():
         x, y = mean
-        print(f"({round(x,decimals)}, {round(y,decimals)}) : {points}", ":", points)
+        print(f"({round(x,DECIMALS)}, {round(y,DECIMALS)}) : {points}", ":", points)
 
 
 def distance(a: Point, b: Point) -> float:
