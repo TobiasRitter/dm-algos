@@ -5,14 +5,18 @@ Point = tuple[float, float]
 DECIMALS = 3
 
 
-def pretty_print(
-    iteration: int,
-    clusters: dict[Point, list[Point]],
-) -> None:
+def pretty_print(iteration: int, clusters: dict[Point, list[Point]]) -> None:
     print(f"step {iteration}:")
     for mean, points in clusters.items():
         x, y = mean
         print(f"({round(x,DECIMALS)}, {round(y,DECIMALS)}) : {points}")
+
+
+def pretty_print_1d(iteration: int, clusters: dict[Point, list[Point]]) -> None:
+    print(f"step {iteration}:")
+    for mean, points in clusters.items():
+        transformed_points = [point[0] for point in points]
+        print(f"{round(mean[0],DECIMALS)} : {transformed_points}")
 
 
 def distance(a: Point, b: Point) -> float:
@@ -32,6 +36,7 @@ def kmeans(
     data_points: list[Point],
     means: list[Point],
     iteration: int = 1,
+    one_d: bool = False,
 ) -> list[Point]:
     clusters: dict[Point, list[Point]] = {mean: [] for mean in means}
 
@@ -39,11 +44,23 @@ def kmeans(
         mean = get_closest_mean(point, means)
         clusters[mean] += [point]
 
-    pretty_print(iteration, clusters)
+    if one_d:
+        pretty_print_1d(iteration, clusters)
+    else:
+        pretty_print(iteration, clusters)
+
     new_means = [get_mean(point_group) for point_group in clusters.values()]
     return (
-        means if new_means == means else kmeans(data_points, new_means, iteration + 1)
+        means
+        if new_means == means
+        else kmeans(data_points, new_means, iteration + 1, one_d)
     )
+
+
+def kmeans_1d(data_points: list[float], means: list[float], iteration: int = 1):
+    transformed_points = [(point, 0) for point in data_points]
+    transformed_means = [(mean, 0) for mean in means]
+    return kmeans(transformed_points, transformed_means, iteration, True)
 
 
 def main() -> None:
