@@ -68,6 +68,7 @@ def z_test(
     h1: H1,
     mu_zero: float = 0,
 ):
+    """sigma is known""" ""
     z0 = (x_bar - mu_zero) / sigma * sqrt(n)
     zc = norm.ppf(get_p(alpha, h1))
     test(z0, zc, h1, True)
@@ -81,6 +82,7 @@ def t_test(
     h1: H1,
     mu_zero: float = 0,
 ):
+    """true sigma unknown"""
     t0 = (x_bar - mu_zero) / sigma * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
     test(t0, tc, h1, False)
@@ -92,10 +94,12 @@ def t_test_data(
     h1: H1,
     mu_zero: float = 0,
 ):
+    """true sigma unknown"""
     n = len(xs)
     x_bar = mean(xs)
     t0 = (x_bar - mu_zero) / sqrt(get_se2(xs)) * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
+    print(f"x_bar: {round(x_bar, DECIMALS)}")
     test(t0, tc, h1, False)
 
 
@@ -111,10 +115,13 @@ def welch(
     h1: H1,
     mu_zero: float = 0,
 ):
-    """h1 = H1.GREATER means x_bar > y_bar"""
+    """xs and ys are independent
+
+    h1 = H1.GREATER means x_bar > y_bar"""
     se = se_x / n_x + se_y / n_y
     t0 = (x_bar - y_bar - mu_zero) / sqrt(se)
     tc = t.ppf(get_p(alpha, h1), df)
+    print(f"se: {round(se, DECIMALS)}")
     test(t0, tc, h1, False)
 
 
@@ -126,7 +133,9 @@ def welch_data(
     h1: H1,
     mu_zero: float = 0,
 ):
-    """h1 = H1.GREATER means xs > ys"""
+    """xs and ys are independent
+
+    h1 = H1.GREATER means xs > ys"""
     se2 = get_se2(xs) / len(xs) + get_se2(ys) / len(ys)
     t0 = (mean(xs) - mean(ys) - mu_zero) / sqrt(se2)
     tc = t.ppf(get_p(alpha, h1), df)
@@ -141,7 +150,9 @@ def paired_t_data(
     h1: H1,
     mu_zero: float = 0,
 ):
-    """h1 = H1.GREATER means xs > ys"""
+    """xs and ys are dependent
+
+    h1 = H1.GREATER means xs > ys"""
     ds = [x - y for x, y in list(zip(xs, ys))]
     d_bar = mean(ds)
     se2 = get_se2(ds)
