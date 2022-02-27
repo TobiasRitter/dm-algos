@@ -26,7 +26,7 @@ def conf_interval(
     return (round(x_bar - diff, DECIMALS), round(x_bar + diff, DECIMALS))
 
 
-def get_se(xs: list[float]):
+def get_se2(xs: list[float]):
     return sum([(x - mean(xs)) ** 2 for x in xs]) / (len(xs) - 1)
 
 
@@ -91,7 +91,7 @@ def t_test_data(
 ):
     n = len(xs)
     x_bar = mean(xs)
-    t0 = (x_bar - mu_zero) / sqrt(get_se(xs)) * sqrt(n)
+    t0 = (x_bar - mu_zero) / sqrt(get_se2(xs)) * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
     test(t0, tc, h1, False)
 
@@ -122,8 +122,8 @@ def welch_data(
     h1: H1,
     mu_zero: float = 0,
 ):
-    se = get_se(xs) / len(xs) + get_se(ys) / len(ys)
-    t0 = (mean(xs) - mean(ys) - mu_zero) / sqrt(se)
+    se2 = get_se2(xs) / len(xs) + get_se2(ys) / len(ys)
+    t0 = (mean(xs) - mean(ys) - mu_zero) / sqrt(se2)
     tc = t.ppf(get_p(alpha, h1), df)
     test(t0, tc, h1, False)
 
@@ -135,16 +135,18 @@ def paired_t_data(
     h1: H1 = H1.GREATER,
     mu_zero: float = 0,
 ):
-    """h1 = H1.GREATER means xs > ys"""
+    """h1 = H1.GREATER means xs > ys
+    
+    If h1 == H1.LESS, the critical value tc is inverted"""
     ds = [x - y for x, y in list(zip(xs, ys))]
     d_bar = mean(ds)
-    se = get_se(ds)
+    se2 = get_se2(ds)
     n = len(ds)
-    t0 = (d_bar - mu_zero) / sqrt(se) * sqrt(n)
+    t0 = (d_bar - mu_zero) / sqrt(se2) * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
     print(f"d_bar: {round(d_bar, DECIMALS)}")
-    print(f"se: {round(se, DECIMALS)}")
-    test(t0, tc, h1, False)
+    print(f"se^2: {round(se2, DECIMALS)}")
+    test(t0, -tc if h1 == H1.LESS else tc, h1, False)
 
 
 def main():
