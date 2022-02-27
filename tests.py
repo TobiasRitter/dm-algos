@@ -26,11 +26,11 @@ def conf_interval(
     return (round(x_bar - diff, DECIMALS), round(x_bar + diff, DECIMALS))
 
 
-def get_se2(xs: list[float]):
+def get_se2(xs: list[float]) -> float:
     return sum([(x - mean(xs)) ** 2 for x in xs]) / (len(xs) - 1)
 
 
-def get_p(alpha: float, h1: H1):
+def get_p(alpha: float, h1: H1) -> float:
     return 1 - alpha / 2 if h1 == H1.EQUAL else 1 - alpha
 
 
@@ -42,7 +42,7 @@ def check(val_0: float, val_c: float, h1: H1) -> bool:
     return abs(val_0) > abs(val_c)
 
 
-def test(val_0: float, val_c: float, h1: H1, use_z: bool):
+def test(val_0: float, val_c: float, h1: H1, use_z: bool) -> None:
     distribution = "z" if use_z else "t"
 
     if h1 == H1.LESS:
@@ -68,7 +68,7 @@ def z_test(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """sigma is known""" ""
     z0 = (x_bar - mu_zero) / sigma * sqrt(n)
     zc = norm.ppf(get_p(alpha, h1))
@@ -82,7 +82,7 @@ def t_test(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """true sigma unknown"""
     t0 = (x_bar - mu_zero) / sigma * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
@@ -94,7 +94,7 @@ def t_test_data(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """true sigma unknown"""
     n = len(xs)
     x_bar = mean(xs)
@@ -115,7 +115,7 @@ def welch(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """xs and ys are independent
 
     h1 = H1.GREATER means x_bar > y_bar"""
@@ -133,7 +133,7 @@ def welch_data(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """xs and ys are independent
 
     h1 = H1.GREATER means xs > ys"""
@@ -150,7 +150,7 @@ def paired_t_data(
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
-):
+) -> None:
     """xs and ys are dependent
 
     h1 = H1.GREATER means xs > ys"""
