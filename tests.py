@@ -46,6 +46,7 @@ def test(val_0: float, val_c: float, h1: H1, use_z: bool):
     distribution = "z" if use_z else "t"
 
     if h1 == H1.LESS:
+        print("inverting critical value")
         val_c = -val_c
 
     if h1 == H1.EQUAL:
