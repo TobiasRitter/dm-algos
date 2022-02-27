@@ -131,15 +131,16 @@ def paired_t_data(
     xs: list[float],
     ys: list[float],
     alpha: float,
-    h1: H1,
+    h1: H1 = H1.LESS,
     mu_zero: float = 0,
 ):
+    """xs are the smaller values, ys the bigger ones"""
     ds = [x - y for x, y in list(zip(xs, ys))]
     se = get_se(ds)
     n = len(ds)
     t0 = (mean(ds) - mu_zero) / sqrt(se) * sqrt(n)
     tc = t.ppf(get_p(alpha, h1), n - 1)
-    test(t0, tc, h1, False)
+    test(t0, -tc, h1, False)
 
 
 def main():
