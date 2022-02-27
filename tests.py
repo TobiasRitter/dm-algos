@@ -45,6 +45,9 @@ def check(val_0: float, val_c: float, h1: H1) -> bool:
 def test(val_0: float, val_c: float, h1: H1, use_z: bool):
     distribution = "z" if use_z else "t"
 
+    if h1 == H1.LESS:
+        val_c = -val_c
+
     if h1 == H1.EQUAL:
         print(f"|{distribution}_0|: {round(abs(val_0),DECIMALS)}")
         print(f"|{distribution}_c|: {round(abs(val_c),DECIMALS)}")
@@ -108,6 +111,7 @@ def welch(
     h1: H1,
     mu_zero: float = 0,
 ):
+    """h1 = H1.GREATER means x_bar > y_bar"""
     se = se_x / n_x + se_y / n_y
     t0 = (x_bar - y_bar - mu_zero) / sqrt(se)
     tc = t.ppf(get_p(alpha, h1), df)
@@ -122,9 +126,11 @@ def welch_data(
     h1: H1,
     mu_zero: float = 0,
 ):
+    """h1 = H1.GREATER means xs > ys"""
     se2 = get_se2(xs) / len(xs) + get_se2(ys) / len(ys)
     t0 = (mean(xs) - mean(ys) - mu_zero) / sqrt(se2)
     tc = t.ppf(get_p(alpha, h1), df)
+    print(f"se^2: {round(se2, DECIMALS)}")
     test(t0, tc, h1, False)
 
 
@@ -132,12 +138,10 @@ def paired_t_data(
     xs: list[float],
     ys: list[float],
     alpha: float,
-    h1: H1 = H1.GREATER,
+    h1: H1,
     mu_zero: float = 0,
 ):
-    """h1 = H1.GREATER means xs > ys
-    
-    If h1 == H1.LESS, the critical value tc is inverted"""
+    """h1 = H1.GREATER means xs > ys"""
     ds = [x - y for x, y in list(zip(xs, ys))]
     d_bar = mean(ds)
     se2 = get_se2(ds)
@@ -146,7 +150,7 @@ def paired_t_data(
     tc = t.ppf(get_p(alpha, h1), n - 1)
     print(f"d_bar: {round(d_bar, DECIMALS)}")
     print(f"se^2: {round(se2, DECIMALS)}")
-    test(t0, -tc if h1 == H1.LESS else tc, h1, False)
+    test(t0, tc, h1, False)
 
 
 def main():
