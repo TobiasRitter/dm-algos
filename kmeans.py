@@ -10,6 +10,7 @@ def pretty_print(iteration: int, clusters: dict[Point, list[Point]]) -> None:
     for mean, points in clusters.items():
         x, y = mean
         print(f"({round(x,DECIMALS)}, {round(y,DECIMALS)}) : {points}")
+    print("")
 
 
 def pretty_print_1d(iteration: int, clusters: dict[Point, list[Point]]) -> None:
@@ -17,6 +18,7 @@ def pretty_print_1d(iteration: int, clusters: dict[Point, list[Point]]) -> None:
     for mean, points in clusters.items():
         transformed_points = [point[0] for point in points]
         print(f"{round(mean[0],DECIMALS)} : {transformed_points}")
+    print("")
 
 
 def distance(a: Point, b: Point) -> float:
