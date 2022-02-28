@@ -19,10 +19,13 @@ def weighted_corr(
     xs: list[float], ys: list[float], denom: int, print_out: bool = True
 ) -> float:
     xs_new, ys_new = filter(xs, ys)
-    res = pearsonr(xs_new, ys_new)[0] * len(xs_new) / denom
+    pears = pearsonr(xs_new, ys_new)[0]
+    res = pears * len(xs_new) / denom
 
     if print_out:
-        print(f"weighted corr: {round(res, DECIMALS)}")
+        print(
+            f"weighted corr: ({len(xs_new)} / {denom}) * {round(pears, DECIMALS)} = {round(res, DECIMALS)}"
+        )
     return res
 
 
