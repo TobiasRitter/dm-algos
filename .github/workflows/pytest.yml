@@ -24,4 +24,4 @@ jobs:
         black .
     - name: Run tests
       run: |
-        pytest
+        pytest --cov
