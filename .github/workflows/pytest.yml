@@ -1,4 +1,4 @@
-name: Pylint
+name: Test Pipeline
 
 on: [push]
 
@@ -21,3 +21,6 @@ jobs:
     - name: Check code formatting with black
       run: |
         black .
+    - name: Run tests
+      run: |
+        pytest
