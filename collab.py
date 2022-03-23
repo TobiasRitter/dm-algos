@@ -5,7 +5,7 @@ from scipy.stats import pearsonr
 DECIMALS = 3
 
 
-def filter(xs: list[float], ys: list[float]) -> tuple[list[float], list[float]]:
+def filter(xs: List[float], ys: List[float]) -> Tuple[List[float], List[float]]:
     x_out = []
     y_out = []
     for x, y in list(zip(xs, ys)):
@@ -16,7 +16,7 @@ def filter(xs: list[float], ys: list[float]) -> tuple[list[float], list[float]]:
 
 
 def weighted_corr(
-    xs: list[float], ys: list[float], denom: int, print_out: bool = True
+    xs: List[float], ys: List[float], denom: int, print_out: bool = True
 ) -> float:
     xs_new, ys_new = filter(xs, ys)
     pears = pearsonr(xs_new, ys_new)[0]
@@ -31,8 +31,8 @@ def weighted_corr(
 
 def print_forecast(
     target_bar: float,
-    corrs: list[float],
-    centered_ratings: list[float],
+    corrs: List[float],
+    centered_ratings: List[float],
     norm: float,
     res: float,
 ):
@@ -50,8 +50,8 @@ def print_forecast(
 
 def forecast(
     target_bar: float,
-    corrs: list[float],
-    centered_ratings: list[float],
+    corrs: List[float],
+    centered_ratings: List[float],
     print_out: bool = True,
 ) -> float:
     num = sum([w * r for w, r in list(zip(corrs, centered_ratings))])
@@ -64,8 +64,8 @@ def forecast(
 
 
 def forecast_data(
-    target_ratings: list[float],
-    other_ratings: list[list[float]],
+    target_ratings: List[float],
+    other_ratings: List[List[float]],
     denom: int,
     index: int,
     print_out: bool = True,

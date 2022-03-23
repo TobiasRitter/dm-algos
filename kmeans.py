@@ -1,11 +1,12 @@
 from statistics import mean as avg
 from math import sqrt
+from typing import List, Tuple, Dict
 
-Point = tuple[float, float]
+Point = Tuple[float, float]
 DECIMALS = 3
 
 
-def pretty_print(iteration: int, clusters: dict[Point, list[Point]]) -> None:
+def pretty_print(iteration: int, clusters: Dict[Point, List[Point]]) -> None:
     print(f"step {iteration}:")
     for mean, points in clusters.items():
         x, y = mean
@@ -13,7 +14,7 @@ def pretty_print(iteration: int, clusters: dict[Point, list[Point]]) -> None:
     print("")
 
 
-def pretty_print_1d(iteration: int, clusters: dict[Point, list[Point]]) -> None:
+def pretty_print_1d(iteration: int, clusters: Dict[Point, List[Point]]) -> None:
     print(f"step {iteration}:")
     for mean, points in clusters.items():
         transformed_points = [point[0] for point in points]
@@ -25,22 +26,22 @@ def distance(a: Point, b: Point) -> float:
     return sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
 
-def get_mean(points: list[Point]) -> Point:
+def get_mean(points: List[Point]) -> Point:
     return (avg(map(lambda x: x[0], points)), avg(map(lambda x: x[1], points)))
 
 
-def get_closest_mean(point: Point, means: list[Point]) -> Point:
+def get_closest_mean(point: Point, means: List[Point]) -> Point:
     distances = {mean: distance(mean, point) for mean in means}
     return min(distances, key=distances.get)
 
 
 def kmeans(
-    data_points: list[Point],
-    means: list[Point],
+    data_points: List[Point],
+    means: List[Point],
     iteration: int = 1,
     one_d: bool = False,
-) -> list[Point]:
-    clusters: dict[Point, list[Point]] = {mean: [] for mean in means}
+) -> List[Point]:
+    clusters: Dict[Point, List[Point]] = {mean: [] for mean in means}
 
     for point in data_points:
         mean = get_closest_mean(point, means)
@@ -59,7 +60,7 @@ def kmeans(
     )
 
 
-def kmeans_1d(data_points: list[float], means: list[float], iteration: int = 1):
+def kmeans_1d(data_points: List[float], means: List[float], iteration: int = 1):
     transformed_points = [(point, 0) for point in data_points]
     transformed_means = [(mean, 0) for mean in means]
     return kmeans(transformed_points, transformed_means, iteration, True)

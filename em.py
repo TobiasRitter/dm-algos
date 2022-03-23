@@ -1,6 +1,6 @@
 from math import exp, sqrt, pi
 
-Distribution = tuple[float, float, float]
+Distribution = Tuple[float, float, float]
 DECIMALS = 3
 
 
@@ -9,13 +9,13 @@ def normal_dist(x: float, dist: Distribution):
     return p / (sigma * sqrt(2 * pi)) * exp(-((x - mu) ** 2 / (2 * sigma**2)))
 
 
-def estimate(x: float, dist: Distribution, distributions: list[Distribution]) -> float:
+def estimate(x: float, dist: Distribution, distributions: List[Distribution]) -> float:
     prob = normal_dist(x, dist)
     norm = sum([normal_dist(x, d) for d in distributions])
     return prob / norm
 
 
-def maximize(points: list[float], estimates: list[float]) -> Distribution:
+def maximize(points: List[float], estimates: List[float]) -> Distribution:
     assignments = list(zip(points, estimates))
     mu = sum([prob * point for point, prob in assignments]) / sum(estimates)
     sigma = sqrt(
@@ -27,9 +27,9 @@ def maximize(points: list[float], estimates: list[float]) -> Distribution:
 
 def pretty_print(
     iteration: int,
-    clusters: dict[Distribution, list[float]],
-    points: list[float],
-    distributions: list[Distribution],
+    clusters: Dict[Distribution, List[float]],
+    points: List[float],
+    distributions: List[Distribution],
 ):
     print(f"step {iteration}:")
     print("clusters:")
@@ -52,16 +52,16 @@ def pretty_print(
 
 
 def get_dist_assignments(
-    point: float, distributions: list[Distribution]
-) -> tuple[float, Distribution]:
+    point: float, distributions: List[Distribution]
+) -> Tuple[float, Distribution]:
     estimates = {dist: estimate(point, dist, distributions) for dist in distributions}
     best_dist = max(estimates, key=estimates.get)
     return (point, best_dist)
 
 
 def get_clusters(
-    points: list[float], distributions: list[Distribution]
-) -> dict[Distribution, list[float]]:
+    points: List[float], distributions: List[Distribution]
+) -> Dict[Distribution, List[float]]:
     assignments = [get_dist_assignments(point, distributions) for point in points]
     clusters = {dist: [] for dist in distributions}
 
@@ -72,10 +72,10 @@ def get_clusters(
 
 
 def em(
-    points: list[float],
-    distributions: list[Distribution],
+    points: List[float],
+    distributions: List[Distribution],
     iteration: int = 1,
-    groups: list[list[float]] = [],
+    groups: List[List[float]] = [],
 ):
     # assign to points to clusters
     clusters = get_clusters(points, distributions)

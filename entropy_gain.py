@@ -3,14 +3,14 @@ from math import log2
 DECIMALS = 3
 
 
-def entropy(ps: list[float], print_out: bool = True) -> float:
+def entropy(ps: List[float], print_out: bool = True) -> float:
     res = -sum([0 if p == 0 else p * log2(p) for p in ps])
     if print_out:
         print(f"entropy: {round(res, DECIMALS)}")
     return res
 
 
-def print_info(denom: int, summands: list[tuple[int, float]], res: float) -> None:
+def print_info(denom: int, summands: List[Tuple[int, float]], res: float) -> None:
     if len(summands) == 1:
         print(f"info: {round(res,DECIMALS)}")
         return
@@ -29,7 +29,7 @@ def print_info(denom: int, summands: list[tuple[int, float]], res: float) -> Non
     print(f" = {round(res, DECIMALS)}")
 
 
-def info(pss: list[list[int]], print_out: bool = True) -> float:
+def info(pss: List[List[int]], print_out: bool = True) -> float:
     pss_sum = sum(sum(pss, []))
     summands = [(sum(ps), entropy([p / sum(ps) for p in ps], False)) for ps in pss]
     res = sum(
@@ -43,7 +43,7 @@ def info(pss: list[list[int]], print_out: bool = True) -> float:
 
 
 def gain(
-    prev_split: list[list[int]], new_split: list[list[int]], print_out: bool = True
+    prev_split: List[List[int]], new_split: List[List[int]], print_out: bool = True
 ) -> float:
     old = info(prev_split, False)
     new = info(new_split, False)
@@ -58,7 +58,7 @@ def gain(
 
 
 def gain_ratio(
-    prev_split: list[list[int]], new_split: list[list[int]], print_out: bool = True
+    prev_split: List[List[int]], new_split: List[List[int]], print_out: bool = True
 ) -> float:
     leaf_sizes = [sum(leaf) for leaf in new_split]
     numerator = gain(prev_split, new_split, False)

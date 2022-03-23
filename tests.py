@@ -1,6 +1,7 @@
 from enum import Enum
 from math import sqrt
 from statistics import mean
+from typing import List, Tuple
 
 from scipy.stats import norm, t
 
@@ -19,14 +20,14 @@ def conf_interval(
     n: int,
     alpha: float,
     use_z: bool,
-) -> tuple[float, float]:
+) -> Tuple[float, float]:
     p = 1 - alpha / 2
     val_c = norm.ppf(p) if use_z else t.ppf(p, n - 1)
     diff = val_c * sigma_or_s / sqrt(n)
     return (round(x_bar - diff, DECIMALS), round(x_bar + diff, DECIMALS))
 
 
-def get_se2(xs: list[float]) -> float:
+def get_se2(xs: List[float]) -> float:
     return sum([(x - mean(xs)) ** 2 for x in xs]) / (len(xs) - 1)
 
 
@@ -90,7 +91,7 @@ def t_test(
 
 
 def t_test_data(
-    xs: list[float],
+    xs: List[float],
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
@@ -127,8 +128,8 @@ def welch(
 
 
 def welch_data(
-    xs: list[float],
-    ys: list[float],
+    xs: List[float],
+    ys: List[float],
     df: int,
     alpha: float,
     h1: H1,
@@ -145,8 +146,8 @@ def welch_data(
 
 
 def paired_t_data(
-    xs: list[float],
-    ys: list[float],
+    xs: List[float],
+    ys: List[float],
     alpha: float,
     h1: H1,
     mu_zero: float = 0,
